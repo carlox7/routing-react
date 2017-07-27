@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import {BrowserRouter, Route}from 'react-router-dom';
 
+
 //app modules
 import AboutContainer from './component/about-container';
 import DashboardContainer from './component/dashboard-container';
@@ -15,7 +16,11 @@ class App extends React.Component {
   constructor(props){
     super(props);
 
-    this.state = {};
+    this.state = {
+      budget: 400,
+      expenses: [],
+    };
+
     this.getApp = this.getApp.bind(this);
   }
 
