@@ -5,20 +5,46 @@ import {BrowserRouter, Route, Link} from 'react-router-dom';
 import AboutContainer from './component/about-container';
 import DashboardContainer from './component/dashboard-container';
 
+//constructor
 class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      total: 400,
+      expenses: [],
+    };
+
+    this.getApp = this.getApp.bind(this);
+  }
+  //hooks
+  componentDidUpdate(){
+    console.log('__STATE__', this.state);
+  }
+  //method
+  getApp(){
+    return {
+      state:this.state,
+      setState: this.setState.bind(this),
+    };
+  }
+  //render
   render(){
     return (
       <main className='app'>
         <BrowserRouter>
           <div>
-            <Route exact path='/' component={DashboardContainer} />
+            <Route exact path='/'
+              component={() => <DashboardContainer app={this.getApp()} />} />
             <Route exact path='/about' component={AboutContainer} />
           </div>
         </BrowserRouter>
-        <h1> hello world {this.props.title} </h1>
       </main>
     );
   }
 }
 
-ReactDom.render(<App title='from prop' />, document.getElementById('root'));
+//identical statements
+//<DashboardContainer app={this.getApp()} />
+//new DashboardContainer({app: this.getApp()})
+
+ReactDom.render(<App title='cool beans' />, document.getElementById('root'));
