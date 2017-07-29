@@ -1,32 +1,72 @@
 import React from 'react';
-import Navbar from '../navbar';
 import uuid from 'uuid/v1';
+import ExpenseForm from '../expense-form';
+import ExpenseList from '../expense-list';
+import Navbar from '../navbar';
+
 
 class DashboardContainer extends React.Component {
   constructor(props){
     super(props);
 
     this.expenseCreate = this.expenseCreate.bind(this);
+    this.expenseRemove = this.expenseRemove.bind(this);
+    this.expenseUpdate = this.expenseUpdate.bind(this);
+
   }
 
   //hooks
   //methods
   expenseCreate(expense){
-    let {app} = this.props;
-
     expense.id = uuid();
-    app.setState(prevState => {
-      //imutably add the new expense to the old expense array on apps state
-      expenses: prevState.expenses.concat([expense]);
-    });
+
+    //imutably add the new expense to the old expense array on apps state
+    let {app} = this.props;
+    app.setState(prevState => ({
+      expenses: prevState.expenses.concat([expense]),
+    }));
+  }
+
+  expenseRemove(expense){
+    let {app} = this.props;
+    app.setState(prevState => ({
+      expenses: prevState.expenses.filter((item) => {
+        return item.id !== expense.id;
+      }),
+    }));
+  }
+
+  expenseUpdate(expense){
+    let {app} = this.props;
+    app.setState(prevState => ({
+      expenses: prevState.expenses.map((item) => {
+        return item.id == expense.id ? expense : item;
+      }),
+    }));
   }
 
   //render
   render() {
+    let {app} = this.props;
+    let totalSpent = app.state.expenses.reduce((p, c) => {
+      return p + c.price;
+    }, 0);
+
+    let remainingBudget = app.state.total - totalSpent;
     return(
       <div className='dashboard-container'>
         <Navbar />
-        <p>dashboard</p>
+        <p> Total Budget: {app.state.total} </p>
+        <p>Total Spent: {totalSpent} </p>
+        <p> Remaining Budget: {remainingBudget} </p>
+        <ExpenseForm
+          handleSubmit={this.expenseCreate}
+          submitTitle='add expense'
+        />
+        <ExpenseList
+          expenseRemove={this.expenseRemove}
+          expenseUpdate={this.expenseUpdate}
+          expenses={app.state.expenses} />
       </div>
     );
   }
