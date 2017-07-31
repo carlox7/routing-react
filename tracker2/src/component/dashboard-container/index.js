@@ -3,11 +3,17 @@ import uuid from 'uuid/v1';
 import ExpenseForm from '../expense-form';
 import ExpenseList from '../expense-list';
 import Navbar from '../navbar';
+import Modal from '../modal';
 
+let renderIf = (test, component) => test ? component : undefined;
 
 class DashboardContainer extends React.Component {
   constructor(props){
     super(props);
+
+    this.state = {
+      showErrors: true,
+    };
 
     this.expenseCreate = this.expenseCreate.bind(this);
     this.expenseRemove = this.expenseRemove.bind(this);
@@ -67,6 +73,13 @@ class DashboardContainer extends React.Component {
           expenseRemove={this.expenseRemove}
           expenseUpdate={this.expenseUpdate}
           expenses={app.state.expenses} />
+
+        {renderIf(remainingBudget < 0 && this.state.showErrors,
+          <Modal close={() => this.setState({showErrors: false})}>
+            <h1> you have no money </h1>
+            <p> currency balace {remainingBudget} </p>
+          </Modal>
+        )}
       </div>
     );
   }
